@@ -1,0 +1,54 @@
+﻿@page "/studentform"
+@using Blazor_EditableTable.Model
+@using System.Text.Json
+@inject IJSRuntime js
+<h3>Student Component</h3>
+
+<div class="container" >
+
+    <FormComponent Model="@Student" onSave="((Student s)=>onStudentSaveReceive(s))" />
+      
+    
+        <hr/>
+
+    <FormComponent Model="@Employee" onSave="((Employee e)=>onEmployeeSaveReceive(e))" />
+        @* <div class="container">
+            <strong>
+                @JsonSerializer.Serialize(Student);
+            </strong>
+        </div> *@
+   
+</div>
+
+@code {
+    public Student? Student { get; set; } = new Student();
+    public Employee? Employee { get; set; } = new Employee();
+    public string? Name { get; set; } = "Mahesh";
+   // private bool shouldRender = true;
+    protected override void OnInitialized()
+    {
+        // Student = new Student()
+        // {
+        //   StudentId = 1,
+        //   StudentName = "Shankar Narayan",
+        //   ClassTime = new TimeOnly(11, 30),
+        //   JoiningDate = new DateOnly(2020,6,1),
+
+        // };
+        base.OnInitialized();
+    }
+    async void onStudentSaveReceive(Student student)
+    {
+        await js.InvokeVoidAsync("alert", $"Students { JsonSerializer.Serialize(student)}");
+        //shouldRender = false;
+    }
+    async void onEmployeeSaveReceive(Employee employee)
+    {
+        await js.InvokeVoidAsync("alert", $"Employee {JsonSerializer.Serialize(employee)}");
+        //shouldRender = false;
+    }
+    // protected override bool ShouldRender()
+    // {
+    //     return shouldRender;
+    // }
+}

@@ -1,0 +1,100 @@
+﻿@page "/tablecp"
+@using Blazor_EditableTable.Model;
+@using Blazor_EditableTable.Database;
+<h3>Editable Table Component</h3>
+<!--Generate Table Here-->
+<table class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            @foreach (var header in Columns)
+            {
+                <th>@header</th>
+            }
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (Employee employee in Employees)
+        {
+            @if (employee.EmpNo == EditIndex)
+            {
+               
+                <tr>
+                    @foreach (var header in Columns)
+                    {
+
+                        var value = @employee.GetType().GetProperty(header)?.GetValue(employee, null)?.ToString();
+                        <td>
+                            <InputText @bind-Value="@value" class="form-control"
+                            
+                            />
+                       @*      <InputText ValueExpression=@(()=>value)  Value="@value" DisplayName="@header"
+                                    ValueChanged=@((string v)=>Change(v)) class="form-control" /> *@
+                        </td>
+                    }
+                    <td>
+                        <button class="btn btn-success" @onclick="()=>OnSaveClick(employee)">Save</button>
+                    </td>
+                    <td>
+                        <button class="btn btn-warning" @onclick="CancelClick">Cancel</button>
+                    </td>
+                </tr>
+                
+            }
+            else
+            {
+                <tr>
+                    @foreach (var header in Columns)
+                    {
+                        <td>
+                            @employee.GetType().GetProperty(header).GetValue(employee, null)
+                        </td>
+                    }  
+                    <td>
+                     <button class="btn btn-primary" @onclick="()=>OnEditClick(employee.EmpNo)">Edit</button>
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+
+
+@code {
+    List<Employee> Employees = new List<Employee>();
+    EmployeesDb Emps = new EmployeesDb();
+    List<string> Columns = new List<string>();
+    public int EditIndex { get; set; } = -1;
+
+    protected override void OnInitialized()
+    {
+        Employees = Emps;
+
+        var properties = Employees[0].GetType().GetProperties();
+
+        foreach (var pname in properties)
+        {
+            Columns.Add(pname.Name);
+        }
+
+        base.OnInitialized();
+    }
+
+    void OnEditClick(int id)
+    {
+        EditIndex = id;
+    }
+    void CancelClick()
+    {
+        EditIndex = -1;    
+    }
+
+    void OnSaveClick(Employee emp)
+    {
+        
+    }
+
+    void Change(object v)
+    {
+        
+    }
+}
